@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>TestCodeMirror2</groupId>
+	<artifactId>TestCodeMirror2</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>TestCodeMirror2</name>
+	<description>Testing CodeMirror2</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.googlecode.jstd-maven-plugin</groupId>
+			<artifactId>jstd-maven-plugin</artifactId>
+			<version>1.3.2.5</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<!-- default, see profiles below -->
+		<testBrowser>${ChromePath}</testBrowser>
+		<!-- set in your .ms2/settings.xml -->
+		<ChromePath></ChromePath>
+		<FirefoxPath></FirefoxPath>
+		<InternetExplorerPath></InternetExplorerPath>
+	</properties>
+
+	<build>
+		<testSourceDirectory>${basedir}/test</testSourceDirectory>
+
+		<plugins>
+			<plugin>
+				<groupId>com.googlecode.jstd-maven-plugin</groupId>
+				<artifactId>jstd-maven-plugin</artifactId>
+				<version>1.3.2.5</version>
+				<configuration>
+					<basePath>${basedir}</basePath>
+					<config>${basedir}/test/jsTestDriver.conf</config>
+					<port>4224</port>
+					<testOutput>${project.build.directory}/js-test-driver</testOutput>
+					<!-- <reset>true</reset> -->
+					<tests>all</tests>
+
+					<browser>${testBrowser}</browser>
+					<captureConsole>true</captureConsole>
+					<!-- <runnerMode>INFO</runnerMode>-->
+				</configuration>
+				<executions>
+					<execution>
+						<id>run-tests</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<profiles>
+		<profile>
+			<id>chrome</id>
+			<properties>
+				<testBrowser>${ChromePath}</testBrowser>
+			</properties>
+		</profile>
+		<profile>
+			<id>firefox</id>
+			<properties>
+				<testBrowser>${FirefoxPath}</testBrowser>
+			</properties>
+		</profile>
+		<profile>
+			<id>iexplorer</id>
+			<properties>
+				<testBrowser>${InternetExplorerPath}</testBrowser>
+			</properties>
+		</profile>
+		<profile>
+			<id>all</id>
+			<properties>
+				<testBrowser>${ChromePath},${FirefoxPath},${InternetExplorerPath}</testBrowser>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>
