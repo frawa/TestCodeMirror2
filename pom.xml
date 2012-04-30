@@ -36,7 +36,8 @@
 				<configuration>
 					<basePath>${basedir}</basePath>
 					<config>${basedir}/test/jsTestDriver.conf</config>
-					<port>4224</port>
+					<port>14224</port>
+					<server> http://localhost:14224</server>
 					<testOutput>${project.build.directory}/js-test-driver</testOutput>
 					<!-- <reset>true</reset> -->
 					<tests>all</tests>
