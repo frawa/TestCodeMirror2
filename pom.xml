@@ -44,7 +44,10 @@
 
 					<browser>${testBrowser}</browser>
 					<captureConsole>true</captureConsole>
-					<!-- <runnerMode>INFO</runnerMode>-->
+					<!-- 
+					<runnerMode>DEBUG</runnerMode>
+					<runnerMode>INFO</runnerMode>
+					-->
 				</configuration>
 				<executions>
 					<execution>
