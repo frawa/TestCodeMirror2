@@ -157,3 +157,36 @@ ModesTest.prototype.test_clojure = function(queue) {
 		callbacks.noop()();
 	});
 };
+
+ModesTest.prototype.test_coffeescript = function(queue) {
+	var mode = 'coffeescript';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		// The document has 697 lines, but only 123 are rendered.
+		
+		var lines = this.countCodeMirrorLines();
+		//assertEquals(697, lines);
+		// IE 109, others 123
+		assertTrue(119<=lines<=123);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('# Current version.','cm-comment');
+		assertEquals(1, count);
+
+		count = this.assertCodeMirrorTextHasClass('this', 'cm-keyword');
+		assertEquals(1, count);
+
+		// TODO scroll the document
+		//count = this.assertCodeMirrorTextHasClass('# Aliases','cm-comment');		
+		
+		count = this.assertCodeMirrorTextHasClass('true', 'cm-atom');
+		assertEquals(0, count);
+
+		count = this.assertCodeMirrorTextHasClass('/\\n/', 'cm-string');
+		assertEquals(0, count);
+
+		callbacks.noop()();
+	});
+};
