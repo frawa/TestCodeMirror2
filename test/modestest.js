@@ -130,3 +130,30 @@ ModesTest.prototype.test_clike = function(queue) {
 		callbacks.noop()();
 	});
 };
+
+ModesTest.prototype.test_clojure = function(queue) {
+	var mode = 'clojure';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(45, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass(';; Launches an example board',
+				'cm-comment');
+		assertEquals(1, count);
+
+		count = this.assertCodeMirrorTextHasClass('defn', 'cm-keyword');
+		assertEquals(4, count);
+
+		count = this.assertCodeMirrorTextHasClass(':doc', 'cm-atom');
+		assertEquals(2, count);
+
+		count = this.assertCodeMirrorTextHasClass('"Conway\'s Game of Life."', 'cm-string');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
