@@ -345,3 +345,88 @@ ModesTest.prototype.test_pascal = function(queue) {
 		callbacks.noop()();
 	});
 };
+
+ModesTest.prototype.test_go = function(queue) {
+	var mode = 'go';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(42,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('// Prime Sieve in Go.','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_groovy = function(queue) {
+	var mode = 'groovy';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(45,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('//Pattern for groovy script','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_haskell = function(queue) {
+	var mode = 'haskell';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(33,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('-- | Find all unique permutations of a list where there might be duplicates.','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_htmlmixed = function(queue) {
+	var mode = 'htmlmixed';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(23,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('<!-- this is a comment -->','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_htmlembedded = function(queue) {
+	var mode = 'htmlembedded';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(11,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('// also colored','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
