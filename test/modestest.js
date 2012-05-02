@@ -190,7 +190,6 @@ ModesTest.prototype.test_coffeescript = function(queue) {
 
 		callbacks.noop()();
 	});
-<<<<<<< HEAD
 };
 
 ModesTest.prototype.test_css = function(queue) {
@@ -431,6 +430,3 @@ ModesTest.prototype.test_htmlembedded = function(queue) {
 		callbacks.noop()();
 	});
 };
-=======
-};
->>>>>>> e450a619f98a1426d69e04ae1c46066cf41a046d
