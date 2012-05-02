@@ -7,7 +7,25 @@
 	<name>TestCodeMirror2</name>
 	<description>Testing CodeMirror2</description>
 
+	<!-- jstestdriver artifacts are not (yet) on maven central.
+	Download from http://code.google.com/p/js-test-driver/downloads/list, and install manually
+	mvn install:install-file -DgroupId=com.google.jstestdriver -DartifactId=jstestdriver -Dpackaging=jar -Dversion=1.3.4.b -Dfile=JsTestDriver-1.3.4.b.jar -DgeneratePom=true 
+	mvn install:install-file -DgroupId=com.google.jstestdriver -DartifactId=coverage -Dpackaging=jar -Dversion=1.3.4.b -Dfile=coverage-1.3.4.b.jar -DgeneratePom=true 
+	-->
+
 	<dependencies>
+		<dependency>
+			<groupId>com.google.jstestdriver</groupId>
+			<artifactId>jstestdriver</artifactId>
+			<version>1.3.4.b</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.jstestdriver</groupId>
+			<artifactId>coverage</artifactId>
+			<version>1.3.4.b</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.googlecode.jstd-maven-plugin</groupId>
 			<artifactId>jstd-maven-plugin</artifactId>
@@ -39,17 +57,14 @@
 					<basePath>${basedir}</basePath>
 					<config>${basedir}/test/jsTestDriver.conf</config>
 					<port>14224</port>
-					<server> http://localhost:14224</server>
+					<server>http://localhost:14224</server>
 					<testOutput>${project.build.directory}/js-test-driver</testOutput>
 					<tests>all</tests>
-
 					<browser>${testBrowser}</browser>
-					<!-- 
-					<reset>true</reset>
-					<captureConsole>true</captureConsole>
-					<runnerMode>DEBUG</runnerMode> 
-					<runnerMode>INFO</runnerMode>
-				    -->
+					<captureConsole>false</captureConsole>
+
+					<!-- <reset>true</reset> <captureConsole>true</captureConsole> <runnerMode>DEBUG</runnerMode> 
+						<runnerMode>INFO</runnerMode> -->
 				</configuration>
 				<executions>
 					<execution>
@@ -105,9 +120,8 @@
 							<server> http://localhost:24224</server>
 							<testOutput>${project.build.directory}/js-test-driver-coverage</testOutput>
 							<tests>all</tests>
-
 							<browser>${testBrowser}</browser>
-							<captureConsole>true</captureConsole>
+							<captureConsole>false</captureConsole>
 						</configuration>
 						<executions>
 							<execution>
@@ -129,7 +143,7 @@
 								<phase>integration-test</phase>
 								<goals>
 									<goal>replace</goal>
-								</goals>								
+								</goals>
 							</execution>
 						</executions>
 						<configuration>

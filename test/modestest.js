@@ -2,14 +2,15 @@ ModesTest = AsyncTestCase("ModesTest");
 
 ModesTest.prototype.loadModeIndexHtml = function(mode, queue) {
 	var path = '/test/mode/' + mode + '/index.html';
+	var frame = null;
 	queue.call('load ' + path, function(callbacks) {
 		var doc = window.document;
-		var frame = doc.createElement('iframe');
-		frame.src = path;
+		frame = doc.createElement('iframe');
 		frame.id = mode;
 		var handler = callbacks.add(function() {
 			jstestdriver.console.log("loaded " + path);
 		});
+		frame.src = path;
 		frame.onload = function() {
 			handler();
 		};
@@ -17,8 +18,9 @@ ModesTest.prototype.loadModeIndexHtml = function(mode, queue) {
 	});
 
 	queue.call('discover CodeMirror ', function(callbacks) {
-		var frame = window.document.getElementById(mode);
+		assertNotNull(frame);
 		var doc = frame.contentWindow.document;
+		assertNotNull(doc);
 		this.discoverCodeMirror(doc);
 		callbacks.noop()();
 	});
@@ -40,7 +42,7 @@ ModesTest.prototype.discoverCodeMirror = function(doc) {
 
 	var lines = this.getElementsByClassName(codeMirror, 'div',
 			'CodeMirror-lines')[0];
-	assertNotNull('CodeMirror-lines missing', codeMirror);
+	assertNotNull('CodeMirror-lines missing', lines);
 	this._lines = lines;
 };
 
