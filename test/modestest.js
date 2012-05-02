@@ -1,6 +1,6 @@
 ModesTest = AsyncTestCase("ModesTest");
 
-ModesTest.prototype.loadModeIndexHtml = function(mode, queue) {
+ModesTest.prototype.loadModeIndexHtml = function(mode, queue, codeNodeId) {
 	var path = '/test/mode/' + mode + '/index.html';
 	var frame = null;
 	queue.call('load ' + path, function(callbacks) {
@@ -39,7 +39,7 @@ ModesTest.prototype.loadModeIndexHtml = function(mode, queue) {
 		assertNotNull(frame);
 		var doc = frame.contentWindow.document;
 		assertNotNull(doc);
-		this.discoverCodeMirror(doc);
+		this.discoverCodeMirror(doc,codeNodeId);
 		callbacks.noop()();
 	});
 };
@@ -48,9 +48,10 @@ ModesTest.prototype._code = null;
 ModesTest.prototype._codeMirror = null;
 ModesTest.prototype._lines = null;
 
-ModesTest.prototype.discoverCodeMirror = function(doc) {
-	var code = doc.getElementById('code');
-	assertNotNull('code missing', code);
+ModesTest.prototype.discoverCodeMirror = function(doc,codeNodeId) {
+	var id = codeNodeId?codeNodeId:'code'
+	var code = doc.getElementById(id);
+	assertNotNull('code missing with id '+id, code);
 	this._code = code;
 
 	var codeMirror = this.getElementsByClassName(doc, 'div', 'CodeMirror')[0];
@@ -186,6 +187,160 @@ ModesTest.prototype.test_coffeescript = function(queue) {
 
 		count = this.assertCodeMirrorTextHasClass('/\\n/', 'cm-string');
 		assertEquals(0, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_css = function(queue) {
+	var mode = 'css';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(34,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('/* Some example CSS */','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_diff = function(queue) {
+	var mode = 'diff';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(77,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('--- a/index.html','cm-minus');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_ecl = function(queue) {
+	var mode = 'ecl';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(17,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('//  this is a singleline comment!','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_xml = function(queue) {
+	var mode = 'xml';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(11,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('<!-- this is a comment -->','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_markdown = function(queue) {
+	var mode = 'markdown';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		// IE 109, others 123
+		assertTrue(119<=lines<=123);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('## Paragraphs, Headers, Blockquotes ##','cm-header');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_gfm = function(queue) {
+	var mode = 'gfm';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(16,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('// log them','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_mysql = function(queue) {
+	var mode = 'mysql';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(16,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('-- Comment for the code','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_ntriples = function(queue) {
+	var mode = 'ntriples';
+	this.loadModeIndexHtml(mode, queue, 'ntriples');
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(7,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('"literal 2"','cm-string');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_pascal = function(queue) {
+	var mode = 'pascal';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(22,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('(* Example Pascal code *)','cm-comment');
+		assertEquals(1, count);
 
 		callbacks.noop()();
 	});
