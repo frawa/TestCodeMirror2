@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><launchConfiguration type="com.google.eclipse.javascript.jstestdriver.ui.JstdTestDriverLaunchConfiguration">
+<stringAttribute key="basePath_0" value="I:\FWprivate\dev-private\CodeMirror2\TestCodeMirror2"/>
+<stringAttribute key="com.google.jstestdriver.eclipse.ui.confFileName" value="test\jsTestDriver-coverage.conf"/>
+<stringAttribute key="com.google.jstestdriver.eclipse.ui.confFullPath" value="test\jsTestDriver-coverage.conf"/>
+<stringAttribute key="com.google.jstestdriver.eclipse.ui.confName" value=""/>
+<stringAttribute key="com.google.jstestdriver.eclipse.ui.projectName" value="TestCodeMirror2"/>
+<booleanAttribute key="com.google.jstestdriver.eclipse.ui.runOnEverySave" value="false"/>
+</launchConfiguration>
