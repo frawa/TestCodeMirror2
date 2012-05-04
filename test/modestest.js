@@ -9,7 +9,7 @@ ModesTest.prototype.loadModeIndexHtml = function(mode, queue, codeNodeId) {
 		frame = doc.createElement('iframe');
 		frame.id = mode;
 		var handler = callbacks.add(function() {
-			jstestdriver.console.log("loaded " + path);
+			//jstestdriver.console.log("loaded " + path);
 		});
 		frame.src = path;
 		frame.onload = function() {
@@ -511,6 +511,283 @@ ModesTest.prototype.test_perl = function(queue) {
 		var count;
 		
 		count = this.assertCodeMirrorTextHasClass('#!/usr/bin/perl','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_php = function(queue) {
+	var mode = 'php';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(10,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('// also colored','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_pig = function(queue) {
+	var mode = 'pig';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(11,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('This is a multiline comment.','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_plsql = function(queue) {
+	var mode = 'plsql';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(31,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('-- Oracle PL/SQL Code Demo','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_properties = function(queue) {
+	var mode = 'properties';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(18,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('# Unicode sequences','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_python = function(queue) {
+	var mode = 'python';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(88,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('# Literals','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_r = function(queue) {
+	var mode = 'r';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(42,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('# FUNCTIONS --','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_rpm_changes = function(queue) {
+	var mode = 'rpm/changes';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(26,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('misterx@example.com','cm-string');
+		assertEquals(3, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_rpm_spec = function(queue) {
+	var mode = 'rpm/spec';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(72,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('# spec file for package minidlna','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_rst = function(queue) {
+	var mode = 'rst';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		// IE 109, others 123
+		assertTrue(119<=lines<=123);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass(':duref:','cm-builtin');
+		assertEquals(5, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_ruby = function(queue) {
+	var mode = 'ruby';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		// IE 109, others 123
+		assertTrue(119<=lines<=123);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('# If no more, done entirely.','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_rust = function(queue) {
+	var mode = 'rust';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(22,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('// Demo code.','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_scheme = function(queue) {
+	var mode = 'scheme';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(43,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('; Allow a sequence of patterns.','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_shell = function(queue) {
+	var mode = 'shell';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(23,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('#!/bin/bash','cm-meta');
+		assertEquals(1, count);
+
+		count = this.assertCodeMirrorTextHasClass('# clone the repository','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_smalltak = function(queue) {
+	var mode = 'smalltalk';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(22,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('#MyCounter','cm-string-2');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_smarty = function(queue) {
+	var mode = 'smarty';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(20,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('{* some example Smarty content *}','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_smarty2 = function(queue) {
+	var mode = 'smarty';
+	this.loadModeIndexHtml(mode, queue,'code2');
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(20,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('"string"','cm-string');
 		assertEquals(1, count);
 
 		callbacks.noop()();
