@@ -743,7 +743,7 @@ ModesTest.prototype.test_shell = function(queue) {
 	});
 };
 
-ModesTest.prototype.test_smalltak = function(queue) {
+ModesTest.prototype.test_smalltalk = function(queue) {
 	var mode = 'smalltalk';
 	this.loadModeIndexHtml(mode, queue);
 
