@@ -430,3 +430,89 @@ ModesTest.prototype.test_htmlembedded = function(queue) {
 		callbacks.noop()();
 	});
 };
+
+ModesTest.prototype.test_javascript = function(queue) {
+	var mode = 'javascript';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(48,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('/\\s/','cm-string-2');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_jinja2 = function(queue) {
+	var mode = 'jinja2';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(17,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass(' this is a comment ','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_less = function(queue) {
+	var mode = 'less';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		// IE 109, others 123
+		assertTrue(119<=lines<=123);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('/* Some LESS code */','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_lua = function(queue) {
+	var mode = 'lua';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(40,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('--single line comment','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_perl = function(queue) {
+	var mode = 'perl';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(37,lines);
+
+		var count;
+		
+		count = this.assertCodeMirrorTextHasClass('#!/usr/bin/perl','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
