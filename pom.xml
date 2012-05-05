@@ -203,6 +203,9 @@
 								<argument>${GenHtmlPath}</argument>
 								<argument>-o</argument>
 								<argument>report</argument>
+								<argument>--frames</argument>								
+								<argument>--no-function-coverage</argument>
+								<argument>--no-source</argument>
 								<argument>jsTestDriver.conf-coverage.dat</argument>
 							</arguments>
 						</configuration>
