@@ -14,6 +14,8 @@ ModesTest.prototype.loadModeHtml = function(mode, queue, htmlName) {
 
 		frame = doc.createElement('iframe');
 		frame.id = mode;
+		frame.width = '80%';
+		frame.height = '500px';
 		var handler = callbacks.add(function() {
 			// jstestdriver.console.log("loaded " + path);
 		});
@@ -35,10 +37,15 @@ ModesTest.prototype.loadModeHtml = function(mode, queue, htmlName) {
 
 	queue.call('discover', function(callbacks) {
 		assertNotNull(frame);
+		assertNotNull(frame.contentWindow);
+		
 		var doc = frame.contentWindow.document;
 		assertNotNull(doc);
 		assertNotNull('body missing', doc.body);
-		this._doc = doc;
+		assertNotUndefined('body missing', doc.body);
+		this._doc = doc;		
+		
+		callbacks.noop()();
 	});
 };
 
@@ -66,6 +73,25 @@ ModesTest.prototype.discoverCodeMirror = function(doc, codeNodeId) {
 			'CodeMirror-lines')[0];
 	assertNotNull('CodeMirror-lines missing', lines);
 	this._lines = lines;
+};
+
+ModesTest.prototype.waitForId = function(queue, id) {
+	var that = this;
+	queue.call('wait id '+id, function(callbacks) {
+		var handler = callbacks.add(function() {
+			//jstestdriver.console.log("found id " + id);		
+		});
+		var t = null;
+		var doc = that._doc;
+		var check = function() {
+			//jstestdriver.console.log("check for id " + id);		
+			if ( doc.getElementById(id)!=null ) {
+				handler();
+				window.clearInterval(t);
+			}
+		};
+		t = window.setInterval(check,500);
+	});
 };
 
 ModesTest.prototype.getElementsByClassName = function(element, tag, className) {
@@ -172,7 +198,7 @@ ModesTest.prototype.test_coffeescript = function(queue) {
 
 		var lines = this.countCodeMirrorLines();
 		// assertEquals(697, lines);
-		// IE 109, others 123
+		// IE 119, others 123
 		assertTrue(119 <= lines <= 123);
 
 		var count;
@@ -275,7 +301,7 @@ ModesTest.prototype.test_markdown = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		// IE 109, others 123
+		// IE 119, others 123
 		assertTrue(119 <= lines <= 123);
 
 		var count;
@@ -494,7 +520,7 @@ ModesTest.prototype.test_less = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		// IE 109, others 123
+		// IE 119, others 123
 		assertTrue(119 <= lines <= 123);
 
 		var count;
@@ -692,7 +718,7 @@ ModesTest.prototype.test_rst = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		// IE 109, others 123
+		// IE 119, others 123
 		assertTrue(119 <= lines <= 123);
 
 		var count;
@@ -710,7 +736,7 @@ ModesTest.prototype.test_ruby = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		// IE 109, others 123
+		// IE 119, others 123
 		assertTrue(119 <= lines <= 123);
 
 		var count;
@@ -877,6 +903,167 @@ ModesTest.prototype.test_stex_test = function(queue) {
 
 		var passes = this.getElementsByClassName(this._doc.body, 'div', 'mt-pass').length;
 		assertEquals(tests, passes);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_tiddlywiki = function(queue) {
+	var mode = 'tiddlywiki';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(110, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('!Block Elements','cm-header');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_tiki = function(queue) {
+	var mode = 'tiki';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(56, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('--Line Through--','cm-tw-deleted');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_vbscript = function(queue) {
+	var mode = 'vbscript';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(16, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('\' Pete Guhl','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_velocity = function(queue) {
+	var mode = 'velocity';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(74, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('## displays Hello World!','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_verilog = function(queue) {
+	var mode = 'verilog';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		// IE 119, others 123
+		assertTrue(119 <= lines <= 123);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('/* Verilog demo code */','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_xmlpure = function(queue) {
+	var mode = 'xmlpure';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(16, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('<!-- This is the pure XML mode,','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_xquery = function(queue) {
+	var mode = 'xquery';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		// IE 119, others 123
+		assertTrue(119 <= lines <= 123);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('(: a more \'evil\' test :)','cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+// TODO fix for IE
+ModesTest.prototype.NOT_test_xquery_test = function(queue) {
+	var mode = 'xquery/test';
+	this.loadModeHtml(mode, queue, 'index.html');
+
+	this.waitForId(queue,'qunit-testresult');
+
+	var that = this;
+	queue.call('assert', function(callbacks) {
+		var qunit = that._doc.getElementById('qunit-tests');
+		assertNotNull(qunit);
+		
+		var passes = this.getElementsByClassName(qunit, 'li', 'pass').length;
+		assertTrue('some tests pass', passes > 0);
+
+		var fails = this.getElementsByClassName(qunit, 'li', 'fail').length;
+		assertEquals(0, fails);
+
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_yaml = function(queue) {
+	var mode = 'yaml';
+	this.loadModeIndexHtml(mode, queue);
+	
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(46, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('# Shopping list','cm-comment');
+		assertEquals(1, count);
 
 		callbacks.noop()();
 	});
