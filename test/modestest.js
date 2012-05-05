@@ -1,7 +1,13 @@
 ModesTest = AsyncTestCase("ModesTest");
 
-ModesTest.prototype.loadModeIndexHtml = function(mode, queue, codeNodeId) {
-	var path = '/test/mode/' + mode + '/index.html';
+ModesTest.prototype._doc = null;
+ModesTest.prototype._code = null;
+ModesTest.prototype._codeMirror = null;
+ModesTest.prototype._lines = null;
+
+ModesTest.prototype.loadModeHtml = function(mode, queue, htmlName) {
+	var html = htmlName ? htmlName : 'index.html';
+	var path = '/test/mode/' + mode + '/' + html;
 	var frame = null;
 	queue.call('load ' + path, function(callbacks) {
 		var doc = window.document;
@@ -9,7 +15,7 @@ ModesTest.prototype.loadModeIndexHtml = function(mode, queue, codeNodeId) {
 		frame = doc.createElement('iframe');
 		frame.id = mode;
 		var handler = callbacks.add(function() {
-			//jstestdriver.console.log("loaded " + path);
+			// jstestdriver.console.log("loaded " + path);
 		});
 		frame.src = path;
 		frame.onload = function() {
@@ -19,39 +25,36 @@ ModesTest.prototype.loadModeIndexHtml = function(mode, queue, codeNodeId) {
 				handler();
 			}
 		};
+
 		doc.body.appendChild(frame);
+
 		if (jstestdriver.global.LCOV) {
 			frame.contentWindow.LCOV = jstestdriver.global.LCOV;
 		}
 	});
 
-	/*
-	 * queue.call('wait CodeMirror', function(callbacks) { // wait some more var
-	 * t = null; var done = callbacks.add(function() { if (t) {
-	 * window.clearInterval(t); t = null; } }); var doc =
-	 * frame.contentWindow.document; assertNotNull(doc); var that = this; t =
-	 * window.setInterval(function() { var codeMirror =
-	 * that.getElementsByClassName(doc, 'div', 'CodeMirror')[0]; if (codeMirror) {
-	 * done(); } }, 500); });
-	 */
-
-	queue.call('discover CodeMirror', function(callbacks) {
+	queue.call('discover', function(callbacks) {
 		assertNotNull(frame);
 		var doc = frame.contentWindow.document;
 		assertNotNull(doc);
-		this.discoverCodeMirror(doc,codeNodeId);
+		assertNotNull('body missing', doc.body);
+		this._doc = doc;
+	});
+};
+
+ModesTest.prototype.loadModeIndexHtml = function(mode, queue, codeNodeId) {
+	this.loadModeHtml(mode, queue);
+
+	queue.call('discover CodeMirror', function(callbacks) {
+		this.discoverCodeMirror(this._doc, codeNodeId);
 		callbacks.noop()();
 	});
 };
 
-ModesTest.prototype._code = null;
-ModesTest.prototype._codeMirror = null;
-ModesTest.prototype._lines = null;
-
-ModesTest.prototype.discoverCodeMirror = function(doc,codeNodeId) {
-	var id = codeNodeId?codeNodeId:'code'
+ModesTest.prototype.discoverCodeMirror = function(doc, codeNodeId) {
+	var id = codeNodeId ? codeNodeId : 'code';
 	var code = doc.getElementById(id);
-	assertNotNull('code missing with id '+id, code);
+	assertNotNull('code missing with id ' + id, code);
 	this._code = code;
 
 	var codeMirror = this.getElementsByClassName(doc, 'div', 'CodeMirror')[0];
@@ -142,8 +145,8 @@ ModesTest.prototype.test_clojure = function(queue) {
 
 		var count;
 
-		count = this.assertCodeMirrorTextHasClass(';; Launches an example board',
-				'cm-comment');
+		count = this.assertCodeMirrorTextHasClass(
+				';; Launches an example board', 'cm-comment');
 		assertEquals(1, count);
 
 		count = this.assertCodeMirrorTextHasClass('defn', 'cm-keyword');
@@ -152,7 +155,8 @@ ModesTest.prototype.test_clojure = function(queue) {
 		count = this.assertCodeMirrorTextHasClass(':doc', 'cm-atom');
 		assertEquals(2, count);
 
-		count = this.assertCodeMirrorTextHasClass('"Conway\'s Game of Life."', 'cm-string');
+		count = this.assertCodeMirrorTextHasClass('"Conway\'s Game of Life."',
+				'cm-string');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -165,23 +169,24 @@ ModesTest.prototype.test_coffeescript = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		// The document has 697 lines, but only 123 are rendered.
-		
+
 		var lines = this.countCodeMirrorLines();
-		//assertEquals(697, lines);
+		// assertEquals(697, lines);
 		// IE 109, others 123
-		assertTrue(119<=lines<=123);
+		assertTrue(119 <= lines <= 123);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('# Current version.','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('# Current version.',
+				'cm-comment');
 		assertEquals(1, count);
 
 		count = this.assertCodeMirrorTextHasClass('this', 'cm-keyword');
 		assertEquals(1, count);
 
 		// TODO scroll the document
-		//count = this.assertCodeMirrorTextHasClass('# Aliases','cm-comment');		
-		
+		// count = this.assertCodeMirrorTextHasClass('# Aliases','cm-comment');
+
 		count = this.assertCodeMirrorTextHasClass('true', 'cm-atom');
 		assertEquals(0, count);
 
@@ -198,11 +203,12 @@ ModesTest.prototype.test_css = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(34,lines);
+		assertEquals(34, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('/* Some example CSS */','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('/* Some example CSS */',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -215,11 +221,12 @@ ModesTest.prototype.test_diff = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(77,lines);
+		assertEquals(77, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('--- a/index.html','cm-minus');
+
+		count = this.assertCodeMirrorTextHasClass('--- a/index.html',
+				'cm-minus');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -232,11 +239,12 @@ ModesTest.prototype.test_ecl = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(17,lines);
+		assertEquals(17, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('//  this is a singleline comment!','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'//  this is a singleline comment!', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -249,11 +257,12 @@ ModesTest.prototype.test_xml = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(11,lines);
+		assertEquals(11, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('<!-- this is a comment -->','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('<!-- this is a comment -->',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -267,11 +276,12 @@ ModesTest.prototype.test_markdown = function(queue) {
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
 		// IE 109, others 123
-		assertTrue(119<=lines<=123);
+		assertTrue(119 <= lines <= 123);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('## Paragraphs, Headers, Blockquotes ##','cm-header');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'## Paragraphs, Headers, Blockquotes ##', 'cm-header');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -284,11 +294,11 @@ ModesTest.prototype.test_gfm = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(16,lines);
+		assertEquals(16, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('// log them','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('// log them', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -301,11 +311,12 @@ ModesTest.prototype.test_mysql = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(16,lines);
+		assertEquals(16, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('-- Comment for the code','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('-- Comment for the code',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -318,11 +329,11 @@ ModesTest.prototype.test_ntriples = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(7,lines);
+		assertEquals(7, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('"literal 2"','cm-string');
+
+		count = this.assertCodeMirrorTextHasClass('"literal 2"', 'cm-string');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -335,11 +346,12 @@ ModesTest.prototype.test_pascal = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(22,lines);
+		assertEquals(22, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('(* Example Pascal code *)','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('(* Example Pascal code *)',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -352,11 +364,12 @@ ModesTest.prototype.test_go = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(42,lines);
+		assertEquals(42, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('// Prime Sieve in Go.','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('// Prime Sieve in Go.',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -369,11 +382,12 @@ ModesTest.prototype.test_groovy = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(45,lines);
+		assertEquals(45, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('//Pattern for groovy script','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'//Pattern for groovy script', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -384,17 +398,23 @@ ModesTest.prototype.test_haskell = function(queue) {
 	var mode = 'haskell';
 	this.loadModeIndexHtml(mode, queue);
 
-	queue.call('assert', function(callbacks) {
-		var lines = this.countCodeMirrorLines();
-		assertEquals(33,lines);
+	queue
+			.call(
+					'assert',
+					function(callbacks) {
+						var lines = this.countCodeMirrorLines();
+						assertEquals(33, lines);
 
-		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('-- | Find all unique permutations of a list where there might be duplicates.','cm-comment');
-		assertEquals(1, count);
+						var count;
 
-		callbacks.noop()();
-	});
+						count = this
+								.assertCodeMirrorTextHasClass(
+										'-- | Find all unique permutations of a list where there might be duplicates.',
+										'cm-comment');
+						assertEquals(1, count);
+
+						callbacks.noop()();
+					});
 };
 
 ModesTest.prototype.test_htmlmixed = function(queue) {
@@ -403,11 +423,12 @@ ModesTest.prototype.test_htmlmixed = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(23,lines);
+		assertEquals(23, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('<!-- this is a comment -->','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('<!-- this is a comment -->',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -420,11 +441,12 @@ ModesTest.prototype.test_htmlembedded = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(11,lines);
+		assertEquals(11, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('// also colored','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('// also colored',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -437,11 +459,11 @@ ModesTest.prototype.test_javascript = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(48,lines);
+		assertEquals(48, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('/\\s/','cm-string-2');
+
+		count = this.assertCodeMirrorTextHasClass('/\\s/', 'cm-string-2');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -454,11 +476,12 @@ ModesTest.prototype.test_jinja2 = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(17,lines);
+		assertEquals(17, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass(' this is a comment ','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(' this is a comment ',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -472,11 +495,12 @@ ModesTest.prototype.test_less = function(queue) {
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
 		// IE 109, others 123
-		assertTrue(119<=lines<=123);
+		assertTrue(119 <= lines <= 123);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('/* Some LESS code */','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('/* Some LESS code */',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -489,11 +513,12 @@ ModesTest.prototype.test_lua = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(40,lines);
+		assertEquals(40, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('--single line comment','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('--single line comment',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -506,11 +531,12 @@ ModesTest.prototype.test_perl = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(37,lines);
+		assertEquals(37, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('#!/usr/bin/perl','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('#!/usr/bin/perl',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -523,11 +549,12 @@ ModesTest.prototype.test_php = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(10,lines);
+		assertEquals(10, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('// also colored','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('// also colored',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -540,11 +567,12 @@ ModesTest.prototype.test_pig = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(11,lines);
+		assertEquals(11, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('This is a multiline comment.','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'This is a multiline comment.', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -557,11 +585,12 @@ ModesTest.prototype.test_plsql = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(31,lines);
+		assertEquals(31, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('-- Oracle PL/SQL Code Demo','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('-- Oracle PL/SQL Code Demo',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -574,11 +603,12 @@ ModesTest.prototype.test_properties = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(18,lines);
+		assertEquals(18, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('# Unicode sequences','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('# Unicode sequences',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -591,11 +621,11 @@ ModesTest.prototype.test_python = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(88,lines);
+		assertEquals(88, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('# Literals','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('# Literals', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -608,11 +638,12 @@ ModesTest.prototype.test_r = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(42,lines);
+		assertEquals(42, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('# FUNCTIONS --','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass('# FUNCTIONS --',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -625,11 +656,12 @@ ModesTest.prototype.test_rpm_changes = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(26,lines);
+		assertEquals(26, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('misterx@example.com','cm-string');
+
+		count = this.assertCodeMirrorTextHasClass('misterx@example.com',
+				'cm-string');
 		assertEquals(3, count);
 
 		callbacks.noop()();
@@ -642,11 +674,12 @@ ModesTest.prototype.test_rpm_spec = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(72,lines);
+		assertEquals(72, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('# spec file for package minidlna','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'# spec file for package minidlna', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -660,11 +693,11 @@ ModesTest.prototype.test_rst = function(queue) {
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
 		// IE 109, others 123
-		assertTrue(119<=lines<=123);
+		assertTrue(119 <= lines <= 123);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass(':duref:','cm-builtin');
+
+		count = this.assertCodeMirrorTextHasClass(':duref:', 'cm-builtin');
 		assertEquals(5, count);
 
 		callbacks.noop()();
@@ -678,11 +711,12 @@ ModesTest.prototype.test_ruby = function(queue) {
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
 		// IE 109, others 123
-		assertTrue(119<=lines<=123);
+		assertTrue(119 <= lines <= 123);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('# If no more, done entirely.','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'# If no more, done entirely.', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -695,11 +729,12 @@ ModesTest.prototype.test_rust = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(22,lines);
+		assertEquals(22, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('// Demo code.','cm-comment');
+
+		count = this
+				.assertCodeMirrorTextHasClass('// Demo code.', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -712,11 +747,12 @@ ModesTest.prototype.test_scheme = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(43,lines);
+		assertEquals(43, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('; Allow a sequence of patterns.','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'; Allow a sequence of patterns.', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -729,14 +765,15 @@ ModesTest.prototype.test_shell = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(23,lines);
+		assertEquals(23, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('#!/bin/bash','cm-meta');
+
+		count = this.assertCodeMirrorTextHasClass('#!/bin/bash', 'cm-meta');
 		assertEquals(1, count);
 
-		count = this.assertCodeMirrorTextHasClass('# clone the repository','cm-comment');
+		count = this.assertCodeMirrorTextHasClass('# clone the repository',
+				'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -749,11 +786,11 @@ ModesTest.prototype.test_smalltalk = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(22,lines);
+		assertEquals(22, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('#MyCounter','cm-string-2');
+
+		count = this.assertCodeMirrorTextHasClass('#MyCounter', 'cm-string-2');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -766,11 +803,12 @@ ModesTest.prototype.test_smarty = function(queue) {
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(20,lines);
+		assertEquals(20, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('{* some example Smarty content *}','cm-comment');
+
+		count = this.assertCodeMirrorTextHasClass(
+				'{* some example Smarty content *}', 'cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -779,16 +817,66 @@ ModesTest.prototype.test_smarty = function(queue) {
 
 ModesTest.prototype.test_smarty2 = function(queue) {
 	var mode = 'smarty';
-	this.loadModeIndexHtml(mode, queue,'code2');
+	this.loadModeIndexHtml(mode, queue, 'code2');
 
 	queue.call('assert', function(callbacks) {
 		var lines = this.countCodeMirrorLines();
-		assertEquals(20,lines);
+		assertEquals(20, lines);
 
 		var count;
-		
-		count = this.assertCodeMirrorTextHasClass('"string"','cm-string');
+
+		count = this.assertCodeMirrorTextHasClass('"string"', 'cm-string');
 		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_sparql = function(queue) {
+	var mode = 'sparql';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(15, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('# Comment!', 'cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_stex = function(queue) {
+	var mode = 'stex';
+	this.loadModeIndexHtml(mode, queue);
+
+	queue.call('assert', function(callbacks) {
+		var lines = this.countCodeMirrorLines();
+		assertEquals(74, lines);
+
+		var count;
+
+		count = this.assertCodeMirrorTextHasClass('%%% mode: LaTeX',
+				'cm-comment');
+		assertEquals(1, count);
+
+		callbacks.noop()();
+	});
+};
+
+ModesTest.prototype.test_stex_test = function(queue) {
+	var mode = 'stex';
+	this.loadModeHtml(mode, queue, 'test.html');
+
+	queue.call('assert', function(callbacks) {
+		var tests = this.getElementsByClassName(this._doc.body, 'div', 'mt-test').length;
+		assertTrue('no tests run', tests > 0);
+
+		var passes = this.getElementsByClassName(this._doc.body, 'div', 'mt-pass').length;
+		assertEquals(tests, passes);
 
 		callbacks.noop()();
 	});
