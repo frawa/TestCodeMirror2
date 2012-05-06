@@ -183,34 +183,50 @@
 							</replacements>
 						</configuration>
 					</plugin>
+
+					<!-- Use Ant to run genhtml, as we need to use ${basedir} with Unix 
+						separators -->
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
 						<executions>
 							<execution>
 								<id>genhtml</id>
 								<phase>integration-test</phase>
+								<configuration>
+									<target name="genhtml">
+										<path id="prefix.path">
+											<pathelement location="${basedir}" />
+										</path>
+										<!-- genhtml is case sensitive, on my windows box drive letter 
+											come out lower case (MINGW32). This is a not very nice hack, but is works. 
+											Waiting to be improved ... -->
+										<pathconvert targetos="unix" property="prefix.unix"
+											refid="prefix.path">
+											<map from="c:" to="C:" />
+											<map from="i:" to="I:" />
+											<!--  add more drive letters as needed -->
+										</pathconvert>
+
+										<exec executable="perl"
+											dir="${project.build.directory}/js-test-driver-coverage"
+											failonerror="true">
+											<arg value="${GenHtmlPath}" />
+											<arg line="-o report" />
+											<arg line="--prefix ${prefix.unix}" />
+											<arg line="--html-extension genhtml" />
+											<arg value="jsTestDriver.conf-coverage.dat" />
+											<redirector alwayslog="true" />
+										</exec>
+
+									</target>
+								</configuration>
 								<goals>
-									<goal>exec</goal>
+									<goal>run</goal>
 								</goals>
 							</execution>
 						</executions>
-						<configuration>
-							<executable>perl</executable>
-							<workingDirectory>${project.build.directory}/js-test-driver-coverage</workingDirectory>
-							<arguments>
-								<argument>${GenHtmlPath}</argument>
-								<argument>-o</argument>
-								<argument>report</argument>
-								<argument>--frames</argument>								
-								<argument>--no-function-coverage</argument>
-								<argument>--no-source</argument>
-								<argument>jsTestDriver.conf-coverage.dat</argument>
-							</arguments>
-						</configuration>
 					</plugin>
-
 				</plugins>
 			</build>
 		</profile>
