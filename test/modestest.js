@@ -252,7 +252,7 @@ ModesTest.prototype.test_diff = function(queue) {
 		var count;
 
 		count = this.assertCodeMirrorTextHasClass('--- a/index.html',
-				'cm-minus');
+				'cm-string');
 		assertEquals(1, count);
 
 		callbacks.noop()();
@@ -988,23 +988,6 @@ ModesTest.prototype.test_verilog = function(queue) {
 		var count;
 
 		count = this.assertCodeMirrorTextHasClass('/* Verilog demo code */','cm-comment');
-		assertEquals(1, count);
-
-		callbacks.noop()();
-	});
-};
-
-ModesTest.prototype.test_xmlpure = function(queue) {
-	var mode = 'xmlpure';
-	this.loadModeIndexHtml(mode, queue);
-
-	queue.call('assert', function(callbacks) {
-		var lines = this.countCodeMirrorLines();
-		assertEquals(16, lines);
-
-		var count;
-
-		count = this.assertCodeMirrorTextHasClass('<!-- This is the pure XML mode,','cm-comment');
 		assertEquals(1, count);
 
 		callbacks.noop()();
