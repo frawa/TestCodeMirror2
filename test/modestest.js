@@ -1029,8 +1029,7 @@ ModesTest.prototype.test_xquery = function(queue) {
 	});
 };
 
-// TODO fix for IE
-ModesTest.prototype.NOT_test_xquery_test = function(queue) {
+ModesTest.prototype.test_xquery_test = function(queue) {
 	var mode = 'xquery/test';
 	this.loadModeHtml(mode, queue, 'index.html');
 
