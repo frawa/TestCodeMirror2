@@ -214,7 +214,6 @@
 											<arg value="${GenHtmlPath}" />
 											<arg line="-o report" />
 											<arg line="--prefix ${prefix.unix}" />
-											<arg line="--html-extension genhtml" />
 											<arg value="jsTestDriver.conf-coverage.dat" />
 											<redirector alwayslog="true" />
 										</exec>
