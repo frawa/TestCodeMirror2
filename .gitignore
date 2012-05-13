@@ -2,3 +2,5 @@
 /target
 /bin
 /chromedriver.log
+/.classpath
+/.project
