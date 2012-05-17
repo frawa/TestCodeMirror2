@@ -16,6 +16,12 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.google.jstestdriver</groupId>
 			<artifactId>jstestdriver</artifactId>
 			<version>1.3.4.b</version>
@@ -31,12 +37,6 @@
 			<groupId>com.googlecode.jstd-maven-plugin</groupId>
 			<artifactId>jstd-maven-plugin</artifactId>
 			<version>1.3.2.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -56,6 +56,9 @@
 		<InternetExplorerPath></InternetExplorerPath>
 		<!-- with profile 'coverage' -->
 		<GenHtmlPath></GenHtmlPath>
+				<TestChrome></TestChrome>
+				<TestFirefox></TestFirefox>
+				<TestIExplorer></TestIExplorer>
 	</properties>
 
 	<build>
@@ -86,24 +89,30 @@
 			<id>chrome</id>
 			<properties>
 				<testBrowser>${ChromePath}</testBrowser>
+				<TestChrome>yes</TestChrome>
 			</properties>
 		</profile>
 		<profile>
 			<id>firefox</id>
 			<properties>
 				<testBrowser>${FirefoxPath}</testBrowser>
+				<TestFirefox>yes</TestFirefox>
 			</properties>
 		</profile>
 		<profile>
 			<id>iexplorer</id>
 			<properties>
 				<testBrowser>${InternetExplorerPath}</testBrowser>
+				<TestIExplorer>yes</TestIExplorer>
 			</properties>
 		</profile>
 		<profile>
 			<id>all</id>
 			<properties>
 				<testBrowser>${ChromePath},${FirefoxPath},${InternetExplorerPath}</testBrowser>
+				<TestChrome>yes</TestChrome>
+				<TestFirefox>yes</TestFirefox>
+				<TestIExplorer>yes</TestIExplorer>
 			</properties>
 		</profile>
 
@@ -285,10 +294,10 @@
 								</goals>
 								<configuration>
 									<skip>false</skip>
-									<suiteXmlFiles>
-										<suiteXmlFile>test/testng.xml</suiteXmlFile>
-									</suiteXmlFiles>
 									<systemPropertyVariables>
+										<TestChrome>${TestChrome}</TestChrome>
+										<TestFirefox>${TestFirefox}</TestFirefox>
+										<TestIExplorer>${TestIExplorer}</TestIExplorer>
 										<chrome.path>${ChromePath}</chrome.path>
 										<webdriver.chrome.driver>${ChromeDriverPath}</webdriver.chrome.driver>
 									</systemPropertyVariables>
@@ -299,7 +308,6 @@
 				</plugins>
 			</build>
 		</profile>
-
 
 	</profiles>
 
