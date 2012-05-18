@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,29 +21,21 @@ import org.openqa.selenium.interactions.Actions;
 @RunWith(Parameterized.class)
 public class DemoTest {
 
+	//@Parameters(testDescription="{0}[{2}]")
 	@Parameters
 	public static List<Object[]> browsers() {
-		ArrayList<Object[]> browsers = new ArrayList<Object[]>();
-		if (System.getProperty("TestChrome", "").length()>0l) {
-			browsers.add(new Object[] { "chrome" });
-		} 
-		if (System.getProperty("TestFirefox", "").length()>0) {
-			browsers.add(new Object[] { "firefox" });
-		}
-		return browsers;
+		return TestHelper.getBrowsers();
 	}
 
-	private static WebDriver driver = null;
+	private WebDriver driver;
 
 	public DemoTest(String browser) {		
-		driver = TestHelper.getDriver(browser,driver);
+		driver = TestHelper.getDriver(browser);
 	}
-
+	
 	@AfterClass
 	public static void afterClass() {
-		if (driver != null) {
-			driver.close();
-		}
+		TestHelper.close();
 	}
 
 	private WebElement findWord(int row, String colText, int occurence) {
@@ -65,34 +59,15 @@ public class DemoTest {
 
 		return result;
 	}
-
-	private void moveCursor(WebElement element, int count) {
-		Keys arrow = count >= 0 ? Keys.ARROW_RIGHT : Keys.ARROW_LEFT;
-		count = count >= 0 ? count : -count;
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < count; i++) {
-			builder.append(arrow);
-			builder.append(Keys.NULL);
-		}
-		element.sendKeys(builder.toString());
-	}
-
-	private void clickMouseAt(WebElement element) {
-		Actions actions = new Actions(driver);
-		int w = element.getSize().width;
-		actions.moveToElement(element, w + 1, 1).click().perform();
-	}
-
+	
 	@Test
 	public void complete() {
+		Assume.assumeTrue(TestHelper.hasNativeEvents(driver));
+		
 		URL url = TestHelper.getURL("demo/complete.html");
-		driver.get(url.toString());
-
+		driver.get(url.toString());		
+		
 		WebElement v = findWord(30, "v", 0);
-		// v.click();
-		// moveCursor(v, 1);
-		// clickMouseAt(v);
-		// moveCursor(driver.findElements(By.className("CodeMirror")).get(0),1);
 
 		Actions actions = new Actions(driver);
 		int w = v.getSize().width;
@@ -102,9 +77,6 @@ public class DemoTest {
 		List<WebElement> completions = driver.findElements(By
 				.className("CodeMirror-completions"));
 		Assert.assertTrue("completions missing", completions.size() == 1);
-
-		System.err.println("FW");
-		// new WebDriverWait(driver, 10).until(null);
 	}
 
 	@Test
@@ -113,10 +85,6 @@ public class DemoTest {
 		driver.get(url.toString());
 
 		WebElement v = findWord(30, "v", 0);
-		// v.click();
-		// moveCursor(v, 1);
-		// clickMouseAt(v);
-		// moveCursor(driver.findElements(By.className("CodeMirror")).get(0),1);
 
 		Actions actions = new Actions(driver);
 		int w = v.getSize().width;
@@ -126,8 +94,5 @@ public class DemoTest {
 		List<WebElement> completions = driver.findElements(By
 				.className("CodeMirror-completions"));
 		Assert.assertTrue("completions missing", completions.size() == 1);
-
-		System.err.println("FW");
-		// new WebDriverWait(driver, 10).until(null);
 	}
 }

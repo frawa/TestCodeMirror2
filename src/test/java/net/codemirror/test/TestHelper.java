@@ -1,6 +1,7 @@
 package net.codemirror.test;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
@@ -11,22 +12,46 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class TestHelper {
-	public static WebDriver getDriver(String browser, WebDriver reuse) {
+	private static boolean firefoxWithNativeEvents = false;
+	private static WebDriver currentDriver = null;
+
+	public static ArrayList<Object[]> getBrowsers() {
+		ArrayList<Object[]> browsers = new ArrayList<Object[]>();
+		if (System.getProperty("TestChrome", "").length() > 0l) {
+			browsers.add(new Object[] { "chrome" });
+		}
+		if (System.getProperty("TestFirefox", "").length() > 0) {
+			browsers.add(new Object[] { "firefox" });
+		}
+		// default is firefox
+		if ( browsers.isEmpty()) {
+			browsers.add(new Object[] { "firefox" });
+		}
+		return browsers;
+	}
+
+	public static void close() {
+		if ( currentDriver!=null) {
+			currentDriver.close();
+			currentDriver = null;
+		}		
+	}
+	
+	public static WebDriver getDriver(String browser) {
 		Assert.assertNotNull(browser);
 
-		if (reuse != null) {
-			if (reuseableDriver(reuse, browser)) {
-				return reuse;
+		if (currentDriver != null) {
+			if (reuseableDriver(currentDriver, browser)) {
+				return currentDriver;
 			} else {
-				closeDriver(reuse);
+				close();
 			}
 		}
 
 		WebDriver driver = null;
 		if ("firefox".equals(browser)) {
 			FirefoxProfile profile = new FirefoxProfile();
-			// profile.setEnableNativeEvents(true);
-			profile.setEnableNativeEvents(false);
+			profile.setEnableNativeEvents(firefoxWithNativeEvents);
 			driver = new FirefoxDriver(profile);
 		} else if ("chrome".equals(browser)) {
 			DesiredCapabilities capabilities = DesiredCapabilities.chrome();
@@ -40,6 +65,7 @@ public class TestHelper {
 		} else if ("iexplorer".equals(browser)) {
 			driver = new InternetExplorerDriver();
 		}
+		currentDriver = driver;
 		return driver;
 	}
 
@@ -49,14 +75,17 @@ public class TestHelper {
 				|| ("iexplorer".equals(browser) && reuse instanceof InternetExplorerDriver);
 	}
 
-	public static void closeDriver(WebDriver driver) {
-		driver.close();
-	}
-
 	public static URL getURL(String file) {
 		URL url = TestHelper.class.getClassLoader().getResource(file);
 		Assert.assertNotNull(url);
 		return url;
+	}
+
+	public static boolean hasNativeEvents(WebDriver driver) {
+		if (driver instanceof FirefoxDriver) {
+			return firefoxWithNativeEvents;
+		}
+		return true;
 	}
 
 }
