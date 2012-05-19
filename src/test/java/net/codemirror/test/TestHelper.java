@@ -11,6 +11,8 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.opera.core.systems.OperaDriver;
+
 public class TestHelper {
 	private static boolean firefoxWithNativeEvents = false;
 	private static WebDriver currentDriver = null;
@@ -23,20 +25,23 @@ public class TestHelper {
 		if (System.getProperty("TestFirefox", "").length() > 0) {
 			browsers.add(new Object[] { "firefox" });
 		}
+		if (System.getProperty("TestOpera", "").length() > 0) {
+			browsers.add(new Object[] { "opera" });
+		}
 		// default is firefox
-		if ( browsers.isEmpty()) {
+		if (browsers.isEmpty()) {
 			browsers.add(new Object[] { "firefox" });
 		}
 		return browsers;
 	}
 
 	public static void close() {
-		if ( currentDriver!=null) {
+		if (currentDriver != null) {
 			currentDriver.close();
 			currentDriver = null;
-		}		
+		}
 	}
-	
+
 	public static WebDriver getDriver(String browser) {
 		Assert.assertNotNull(browser);
 
@@ -64,6 +69,14 @@ public class TestHelper {
 			driver = new ChromeDriver(capabilities);
 		} else if ("iexplorer".equals(browser)) {
 			driver = new InternetExplorerDriver();
+		} else if ("opera".equals(browser)) {
+			DesiredCapabilities capabilities = DesiredCapabilities.opera();
+			// capabilities.setCapability("opera.binary", "/usr/bin/opera");
+			// capabilities.setCapability("opera.log.level", "CONFIG");
+			capabilities.setCapability("opera.port", -1);
+			capabilities.setCapability("opera.profile", "");
+			driver = new OperaDriver(capabilities);
+			// driver = new OperaDriver();
 		}
 		currentDriver = driver;
 		return driver;
@@ -72,7 +85,8 @@ public class TestHelper {
 	private static boolean reuseableDriver(WebDriver reuse, String browser) {
 		return ("firefox".equals(browser) && reuse instanceof FirefoxDriver)
 				|| ("chrome".equals(browser) && reuse instanceof ChromeDriver)
-				|| ("iexplorer".equals(browser) && reuse instanceof InternetExplorerDriver);
+				|| ("iexplorer".equals(browser) && reuse instanceof InternetExplorerDriver)
+				|| ("opera".equals(browser) && reuse instanceof OperaDriver);
 	}
 
 	public static URL getURL(String file) {

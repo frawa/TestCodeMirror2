@@ -45,6 +45,12 @@
 			<version>2.21.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.opera</groupId>
+			<artifactId>operadriver</artifactId>
+			<version>0.11</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<properties>
@@ -59,6 +65,7 @@
 		<TestChrome></TestChrome>
 		<TestFirefox></TestFirefox>
 		<TestIExplorer></TestIExplorer>
+		<TestOpera></TestOpera>
 	</properties>
 
 	<build>
@@ -109,6 +116,7 @@
 						<TestChrome>${TestChrome}</TestChrome>
 						<TestFirefox>${TestFirefox}</TestFirefox>
 						<TestIExplorer>${TestIExplorer}</TestIExplorer>
+						<TestOpera>${TestOpera}</TestOpera>
 						<chrome.path>${ChromePath}</chrome.path>
 						<webdriver.chrome.driver>${ChromeDriverPath}</webdriver.chrome.driver>
 					</systemPropertyVariables>
@@ -150,12 +158,20 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>opera</id>
+			<properties>
+				<testBrowser>${OperaPath}</testBrowser>
+				<TestOpera>yes</TestOpera>
+			</properties>
+		</profile>
+		<profile>
 			<id>all</id>
 			<properties>
 				<testBrowser>${ChromePath},${FirefoxPath},${InternetExplorerPath}</testBrowser>
 				<TestChrome>yes</TestChrome>
 				<TestFirefox>yes</TestFirefox>
 				<TestIExplorer>yes</TestIExplorer>
+				<TestOpera>yes</TestOpera>
 			</properties>
 		</profile>
 
@@ -316,5 +332,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

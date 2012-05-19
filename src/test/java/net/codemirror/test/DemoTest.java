@@ -1,13 +1,11 @@
 package net.codemirror.test;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
