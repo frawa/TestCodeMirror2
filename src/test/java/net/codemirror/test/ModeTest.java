@@ -36,8 +36,8 @@ public class ModeTest {
 	}
 
 	private int countLines(String text) {
-		return StringUtils.countMatches(text, "\n")+1;
-		//return text.split("\n").length;
+		return StringUtils.countMatches(text, "\n") + 1;
+		// return text.split("\n").length;
 	}
 
 	private int countSourceLines() {
@@ -301,5 +301,10 @@ public class ModeTest {
 	@Test
 	public void yaml() {
 		loadMode("yaml");
+	}
+
+	@Test
+	public void erlang() {
+		loadMode("erlang");
 	}
 }
