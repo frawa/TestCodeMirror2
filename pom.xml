@@ -118,6 +118,7 @@
 						<TestIExplorer>${TestIExplorer}</TestIExplorer>
 						<TestOpera>${TestOpera}</TestOpera>
 						<chrome.path>${ChromePath}</chrome.path>
+						<webdriver.firefox.bin>${FirefoxPath}</webdriver.firefox.bin>
 						<webdriver.chrome.driver>${ChromeDriverPath}</webdriver.chrome.driver>
 					</systemPropertyVariables>
 				</configuration>

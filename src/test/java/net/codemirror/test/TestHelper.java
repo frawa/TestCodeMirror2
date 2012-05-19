@@ -14,7 +14,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.opera.core.systems.OperaDriver;
 
 public class TestHelper {
-	private static boolean firefoxWithNativeEvents = false;
+	private static boolean firefoxWithNativeEvents = Boolean.getBoolean("firefox.native.events");
 	private static WebDriver currentDriver = null;
 
 	public static ArrayList<Object[]> getBrowsers() {
