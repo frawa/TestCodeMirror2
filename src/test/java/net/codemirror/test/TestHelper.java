@@ -23,6 +23,9 @@ public class TestHelper {
 		if (System.getProperty("TestFirefox", "").length() > 0) {
 			browsers.add(new Object[] { "firefox" });
 		}
+		if (System.getProperty("TestIExplorer", "").length() > 0) {
+			browsers.add(new Object[] { "iexplorer" });
+		}
 		// default is firefox
 		if ( browsers.isEmpty()) {
 			browsers.add(new Object[] { "firefox" });
@@ -63,7 +66,9 @@ public class TestHelper {
 			capabilities.setCapability("chrome.binary", chromePath);
 			driver = new ChromeDriver(capabilities);
 		} else if ("iexplorer".equals(browser)) {
-			driver = new InternetExplorerDriver();
+			DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();  
+			capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);			
+			driver = new InternetExplorerDriver(capabilities);
 		}
 		currentDriver = driver;
 		return driver;

@@ -7,36 +7,11 @@
 	<name>TestCodeMirror2</name>
 	<description>Testing CodeMirror2</description>
 
-	<!-- jstestdriver artifacts are not (yet) on maven central. Download from 
-		http://code.google.com/p/js-test-driver/downloads/list, and install manually 
-		mvn install:install-file -DgroupId=com.google.jstestdriver -DartifactId=jstestdriver 
-		-Dpackaging=jar -Dversion=1.3.4.b -Dfile=JsTestDriver-1.3.4.b.jar -DgeneratePom=true 
-		mvn install:install-file -DgroupId=com.google.jstestdriver -DartifactId=coverage 
-		-Dpackaging=jar -Dversion=1.3.4.b -Dfile=coverage-1.3.4.b.jar -DgeneratePom=true -->
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.jstestdriver</groupId>
-			<artifactId>jstestdriver</artifactId>
-			<version>1.3.4.b</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.jstestdriver</groupId>
-			<artifactId>coverage</artifactId>
-			<version>1.3.4.b</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.jstd-maven-plugin</groupId>
-			<artifactId>jstd-maven-plugin</artifactId>
-			<version>1.3.2.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -48,14 +23,11 @@
 	</dependencies>
 
 	<properties>
-		<!-- default, see profiles below -->
-		<testBrowser>${ChromePath}</testBrowser>
 		<!-- set in your .ms2/settings.xml -->
 		<ChromePath></ChromePath>
+		<ChromeDriverPath></ChromeDriverPath>
 		<FirefoxPath></FirefoxPath>
 		<InternetExplorerPath></InternetExplorerPath>
-		<!-- with profile 'coverage' -->
-		<GenHtmlPath></GenHtmlPath>
 		<TestChrome></TestChrome>
 		<TestFirefox></TestFirefox>
 		<TestIExplorer></TestIExplorer>
@@ -131,189 +103,28 @@
 		<profile>
 			<id>chrome</id>
 			<properties>
-				<testBrowser>${ChromePath}</testBrowser>
 				<TestChrome>yes</TestChrome>
 			</properties>
 		</profile>
 		<profile>
 			<id>firefox</id>
 			<properties>
-				<testBrowser>${FirefoxPath}</testBrowser>
 				<TestFirefox>yes</TestFirefox>
 			</properties>
 		</profile>
 		<profile>
 			<id>iexplorer</id>
 			<properties>
-				<testBrowser>${InternetExplorerPath}</testBrowser>
 				<TestIExplorer>yes</TestIExplorer>
 			</properties>
 		</profile>
 		<profile>
 			<id>all</id>
 			<properties>
-				<testBrowser>${ChromePath},${FirefoxPath},${InternetExplorerPath}</testBrowser>
 				<TestChrome>yes</TestChrome>
 				<TestFirefox>yes</TestFirefox>
 				<TestIExplorer>yes</TestIExplorer>
 			</properties>
-		</profile>
-
-		<profile>
-			<id>jsdt</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.googlecode.jstd-maven-plugin</groupId>
-						<artifactId>jstd-maven-plugin</artifactId>
-						<version>1.3.2.5</version>
-						<configuration>
-							<basePath>${basedir}</basePath>
-							<config>${basedir}/test/jsTestDriver.conf</config>
-							<port>14224</port>
-							<server>http://localhost:14224</server>
-							<testOutput>${project.build.directory}/js-test-driver</testOutput>
-							<tests>all</tests>
-							<browser>${testBrowser}</browser>
-							<captureConsole>false</captureConsole>
-
-							<!-- <reset>true</reset> <captureConsole>true</captureConsole> <runnerMode>DEBUG</runnerMode> 
-								<runnerMode>INFO</runnerMode> -->
-						</configuration>
-						<executions>
-							<execution>
-								<id>run-tests</id>
-								<goals>
-									<goal>test</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>coverage</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.4</version>
-						<executions>
-							<execution>
-								<id>copy-coverage</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>com.google.jstestdriver</groupId>
-											<artifactId>coverage</artifactId>
-											<outputDirectory>${project.build.directory}/dependencies</outputDirectory>
-										</artifactItem>
-									</artifactItems>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.googlecode.jstd-maven-plugin</groupId>
-						<artifactId>jstd-maven-plugin</artifactId>
-						<version>1.3.2.5</version>
-						<configuration>
-							<basePath>${basedir}</basePath>
-							<config>${basedir}/test/jsTestDriver-coverage.conf</config>
-							<port>24224</port>
-							<server>http://localhost:24224</server>
-							<testOutput>${project.build.directory}/js-test-driver-coverage</testOutput>
-							<tests>all</tests>
-							<browser>${testBrowser}</browser>
-							<captureConsole>false</captureConsole>
-							<reset>false</reset>
-							<!-- <runnerMode>INFO</runnerMode> -->
-						</configuration>
-						<executions>
-							<execution>
-								<id>run-tests</id>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>test</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>maven-replacer-plugin</artifactId>
-						<version>1.4.1</version>
-						<executions>
-							<execution>
-								<id>replace</id>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<file>target/js-test-driver-coverage/jsTestDriver.conf-coverage.dat</file>
-							<replacements>
-								<replacement>
-									<token>\\</token>
-									<value>/</value>
-								</replacement>
-							</replacements>
-						</configuration>
-					</plugin>
-
-					<!-- Use Ant to run genhtml, as we need to use ${basedir} with Unix 
-						separators -->
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
-						<executions>
-							<execution>
-								<id>genhtml</id>
-								<phase>integration-test</phase>
-								<configuration>
-									<target name="genhtml">
-										<path id="prefix.path">
-											<pathelement location="${basedir}" />
-										</path>
-										<!-- genhtml is case sensitive, on my windows box drive letter 
-											come out lower case (MINGW32). This is a not very nice hack, but is works. 
-											Waiting to be improved ... -->
-										<pathconvert targetos="unix" property="prefix.unix"
-											refid="prefix.path">
-											<map from="c:" to="C:" />
-											<map from="i:" to="I:" />
-											<!-- add more drive letters as needed -->
-										</pathconvert>
-
-										<exec executable="perl"
-											dir="${project.build.directory}/js-test-driver-coverage"
-											failonerror="true">
-											<arg value="${GenHtmlPath}" />
-											<arg line="-o report" />
-											<arg line="--prefix ${prefix.unix}" />
-											<arg value="jsTestDriver.conf-coverage.dat" />
-											<redirector alwayslog="true" />
-										</exec>
-
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 
