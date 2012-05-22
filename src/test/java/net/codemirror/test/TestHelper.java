@@ -27,6 +27,8 @@ public class TestHelper {
 		}
 		if (System.getProperty("TestOpera", "").length() > 0) {
 			browsers.add(new Object[] { "opera" });
+		if (System.getProperty("TestIExplorer", "").length() > 0) {
+			browsers.add(new Object[] { "iexplorer" });
 		}
 		// default is firefox
 		if (browsers.isEmpty()) {
@@ -67,8 +69,6 @@ public class TestHelper {
 			}
 			capabilities.setCapability("chrome.binary", chromePath);
 			driver = new ChromeDriver(capabilities);
-		} else if ("iexplorer".equals(browser)) {
-			driver = new InternetExplorerDriver();
 		} else if ("opera".equals(browser)) {
 			DesiredCapabilities capabilities = DesiredCapabilities.opera();
 			// capabilities.setCapability("opera.binary", "/usr/bin/opera");
@@ -77,6 +77,10 @@ public class TestHelper {
 			capabilities.setCapability("opera.profile", "");
 			driver = new OperaDriver(capabilities);
 			// driver = new OperaDriver();
+		} else if ("iexplorer".equals(browser)) {
+			DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();  
+			capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);			
+			driver = new InternetExplorerDriver(capabilities);
 		}
 		currentDriver = driver;
 		return driver;
