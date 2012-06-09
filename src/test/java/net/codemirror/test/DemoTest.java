@@ -1,6 +1,7 @@
 package net.codemirror.test;
 
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -99,6 +100,10 @@ public class DemoTest {
 		List<WebElement> completions = driver.findElements(By
 				.className("CodeMirror-completions"));
 		Assert.assertTrue("completions missing", completions.size() == 1);
+		
+		for (WebElement c : completions) {
+			Assert.assertTrue(c.getText().startsWith("v"));
+		}
 	}
 
 	@Test

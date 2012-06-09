@@ -27,6 +27,7 @@ public class TestHelper {
 		}
 		if (System.getProperty("TestOpera", "").length() > 0) {
 			browsers.add(new Object[] { "opera" });
+		}
 		if (System.getProperty("TestIExplorer", "").length() > 0) {
 			browsers.add(new Object[] { "iexplorer" });
 		}
